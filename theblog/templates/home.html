@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}{% endblock %}
+{% block content %}
+
+<ul>
+
+{{object_list.title}}
+{% for post in object_list %}
+    <div class="row">
+            <div class="col-sm-3">
+               <center>
+                    {% if post.author.profile.profile_pic.url %}
+                        <img src="{{post.author.profile.profile_pic.url}}" width="200" height="200" class="rounded-circle">
+                    {% else %}
+                        {% load static %}
+                        <img src="{% static 'images/default_profile_pic.png' %}" width="200" height="200" class="rounded-circle">
+                    {% endif %}
+               </center>
+            </div>
+            <div class="col-sm-9">
+                <h3 class="word-break mr-05" >
+                    <a href="{% url 'article-detail' post.pk %}"  
+                        style="color: #1f004d;text-decoration: none" >{{ post.title }}
+                    </a>
+                </h3>
+                <small>
+                    By: {{ post.author.first_name }} {{ post.author.last_name }} 
+                    - Category: <a href="{% url 'category' post.category|slugify %}" style="color: #1f004d;text-decoration: none" >{{ post.category }}</a>
+                    - Date: {{post.date|date:"d-m-Y"}} 
+                </small><br/>
+                {{ post.body|slice:":500"|safe|linebreaks}}
+                <br/>
+                {% if user.is_authenticated and user.id == post.author.id %}
+                    <a href="{% url 'update_post' post.pk %}" style="color: #1f004d;text-decoration: none">Edit</a> | 
+                    <a href="{% url 'delete_post' post.pk %}" style="color: #1f004d;text-decoration: none">Delete</a>
+                {% endif %}
+            </div>
+    </div>
+    <br/>
+    <hr>
+{%endfor%}
+</ul>
+
+
+
+{% endblock %}

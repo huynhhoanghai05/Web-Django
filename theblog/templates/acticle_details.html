@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block title %}{{ post.title_tag }}{% endblock %}
+{% block content %}
+
+<h1>{{ post.title }}</h1>
+<small>
+    By: {{ post.author.first_name }} {{ post.author.last_name }} - {{ post.author.email }} <br/>
+    Category: {{ post.category }} <br/>
+    Date: {{post.date|date:"d/m/Y H:i"}} <br/>
+{% if user.is_authenticated and user.id == post.author.id %}
+        <a href="{% url 'update_post' post.pk %}">(Edit)</a>
+        <a href="{% url 'delete_post' post.pk %}">(Delete)</a>
+{% endif %}
+</small><br/>
+
+<hr>
+{% if post.header_image %}
+    <img src="{{post.header_image.url}}" >
+{% endif %}
+<br/>
+{{ post.body|safe|linebreaks }}
+
+<br/><br/>
+<a href="{% url 'home' %}" class="btn btn-secondary">Back</a>
+
+{% comment %} <br/><br/>
+<hr>
+<br/>
+<form action="{% url 'like_post' post.pk %}" method="POST">
+    {% csrf_token %}
+    <button type="submit", name="post_id", value="{{post.id}}", class="btn btn-primary btn-sm">Like</button> {% endcomment %}
+
+<br/><br/>
+<h2> Comments..</h2>
+{% if not post.comments.all %}
+    No Comments Yet.. 
+    <a href="{% url 'add_comment' post.pk %}"> Add One</a>
+{% else %}
+    <a href="{% url 'add_comment' post.pk %}"> Add Comment</a> <br/>
+    <hr>
+    {% for comment in post.comments.all %}
+        <strong>
+            {{comment.name}} - {{comment.date}}
+        </strong>
+        <br/>
+        {{comment.body}}<hr>
+    {% endfor %}
+{% endif %}
+
+
+
+<br/><br/>
+{% if post.author.profile.profile_pic.url %}
+    <img src="{{post.author.profile.profile_pic.url}}" width="200" height="200" class="rounded-circle">
+{% else %}
+    {% load static %}
+    <img src="{% static 'images/default_profile_pic.png' %}" width="200" height="200" class="rounded-circle">
+{% endif %}
+
+{% endblock %}
