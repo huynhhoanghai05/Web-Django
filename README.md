@@ -1,1 +1,2 @@
-# python manage.py runserver 0.0.0.0:80
+# Easy run 
+python manage.py runserver 0.0.0.0:80
